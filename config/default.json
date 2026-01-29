@@ -1,0 +1,16 @@
+{
+  "dbConfig": {
+    "staging_mongoURI": "mongodb+srv://admin:rypnyh-jadhuw-5sidfE@zeroed.0v3y1.mongodb.net/?retryWrites=true&w=majority&appName=Zeroed",
+    "production_mongoURI": "replace your production database URL",
+    "backup_mongoURI": "mongodb+srv://admin:rypnyh-jadhuw-5sidfE@zeroed.0v3y1.mongodb.net/?retryWrites=true&w=majority&appName=Zeroed"
+  },
+  "jwtSecret": "U)9wpB%Z>Qh7mjz",
+  "uploadDir": "uploads",
+  "appEmail": "verification@zeroed.ca",
+  "appEmailTo": "",
+  "appPassword": "YvETy6LvjMfG",
+  "localDBURL": "mongodb://localhost:27017/pm_requirement",
+  "liveDBURL": "https://zeroed.one/api",
+  "localAPIURL": "http://localhost:3001/",
+  "backendURL": "https://zeroed-backend.onrender.com"
+}

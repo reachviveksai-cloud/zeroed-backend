@@ -1,0 +1,15 @@
+{
+  "dbConfig": {
+    "staging_mongoURI": "mongodb://wave:Wave%402019!@15.222.234.218:27017/pm_requirement?authSource=admin",
+    "production_mongoURI": "replace your production database URL",
+    "backup_mongoURI": "mongodb://wave:Wave%402019!@15.222.234.218:27017/pm_requirement?authSource=admin"
+  },
+  "jwtSecret": "U)9wpB%Z>Qh7mjz",
+  "uploadDir": "uploads",
+  "appEmail": "zeroedtech@gmail.com",
+  "appEmailTo": "",
+  "appPassword": "popf sowz xffp bnhe",
+  "localDBURL": "mongodb://localhost:27017/pm_requirement",
+  "liveDBURL": "https://zeroed.one/api",
+  "localAPIURL": "http://localhost:3001/"
+}
