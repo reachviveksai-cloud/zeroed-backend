@@ -25,7 +25,7 @@ const sendVerificationEmail = async (email, otp) => {
     });
 
     await transporter.sendMail({
-        from:  config.get('appEmail'),
+        from: config.get('appEmail'),
         to: email,
         subject: 'Email Verification OTP',
         text: `Your OTP for email verification is: ${otp}.`,
@@ -33,7 +33,7 @@ const sendVerificationEmail = async (email, otp) => {
 }
 
 // Register
-const generateOTP = () => Math.floor(1000 + Math.random() * 9000).toString() // Generates a 4-digit OTP
+const generateOTP = () => crypto.randomInt(1000, 9999).toString(); // Secure 4-digit OTP
 
 const sanitize = (str) => str.trim().toLowerCase().replace(/\s+/g, "");
 
@@ -51,35 +51,7 @@ exports.doRegister = async (req, res) => {
         const existingUser = await User.findOne({ email });
 
         if (existingUser) {
-            const isDefaultPassword = await bcrypt.compare('12345678', existingUser.password);
-            if (isDefaultPassword) {
-                const hashedNewPassword = await bcrypt.hash(password, 10);
-                const otp = generateOTP();
-
-                existingUser.password = hashedNewPassword;
-                existingUser.otp = otp;
-
-                await existingUser.save();
-
-                await sendVerificationEmail(email, otp);
-                const newDetails = new BasicDetails({
-                    user_id: existingUser._id,
-                    firstname,
-                    lastname,
-                    slug: `${sanitize(firstname)}-${sanitize(lastname)}-${existingUser._id}`
-                });
-
-                await newDetails.save();
-
-                return sendOkResponse(
-                    res,
-                    {},
-                    'Password updated and verification email sent to registered user.',
-                    []
-                );
-            } else {
-                return sendBadRequestResponse(res, {}, 'Email already registered!');
-            }
+            return sendBadRequestResponse(res, {}, 'Email already registered!');
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -122,10 +94,10 @@ exports.doRegister = async (req, res) => {
 };
 
 exports.verifyOTP = async (req, res) => {
-    const {email, otp} = req.body
+    const { email, otp } = req.body
 
     try {
-        const user = await User.findOne({email})
+        const user = await User.findOne({ email })
         if (!user || user.otp !== otp || user.otpExpiration < Date.now()) {
             return sendBadRequestResponse(res, {}, 'Invalid or expired OTP.')
         }
@@ -142,15 +114,15 @@ exports.verifyOTP = async (req, res) => {
 }
 
 exports.doLogin = async (req, res) => {
-    const {email, password, userName} = req.body;
+    const { email, password, userName } = req.body;
 
     try {
         let user;
 
         if (userName) {
-            user = await User.findOne({userName, role: "ADMIN"});
+            user = await User.findOne({ userName, role: "ADMIN" });
         } else if (email) {
-            user = await User.findOne({email, role: "USER"});
+            user = await User.findOne({ email, role: "USER" });
         } else {
             return sendBadRequestResponse(res, {}, "Invalid credentials.");
         }
@@ -169,9 +141,9 @@ exports.doLogin = async (req, res) => {
         }
 
         const token = jwt.sign(
-            {email: user.email, userName: user.userName, role: user.role, id: user._id.toString()},
+            { email: user.email, userName: user.userName, role: user.role, id: user._id.toString() },
             config.get("jwtSecret"),
-            {expiresIn: "365d"}
+            { expiresIn: "365d" }
         );
 
         return sendOkResponse(
@@ -246,10 +218,10 @@ exports.getAllUsers = async (req, res) => {
 
 
 exports.forgotPassword = async (req, res) => {
-    const {email} = req.body
+    const { email } = req.body
 
     try {
-        const user = await User.findOne({email})
+        const user = await User.findOne({ email })
 
         if (!user) {
             // return res.status(404).send('User not found')
@@ -286,9 +258,9 @@ exports.forgotPassword = async (req, res) => {
 }
 
 exports.OTPverifyPassword = async (req, res) => {
-    const {email, otp} = req.body
+    const { email, otp } = req.body
     try {
-        const user = await User.findOne({email})
+        const user = await User.findOne({ email })
 
         if (!user || user.otp !== otp || Date.now() > user.otpExpires) {
             return res.status(400).send('Invalid or expired OTP')
@@ -311,10 +283,10 @@ exports.OTPverifyPassword = async (req, res) => {
 }
 
 exports.resetPassword = async (req, res) => {
-    const {email, newPassword} = req.body
+    const { email, newPassword } = req.body
 
     try {
-        const user = await User.findOne({email})
+        const user = await User.findOne({ email })
 
         if (!user) {
             return res.status(404).send('User not found')
@@ -343,7 +315,7 @@ exports.createUser = async (req, res) => {
         let newUser;
 
         if (!user) {
-            const defaultPassword = '12345678';
+            const defaultPassword = crypto.randomBytes(8).toString('hex');
             const hashedPassword = await bcrypt.hash(defaultPassword, 10);
 
             newUser = new User({
@@ -381,7 +353,7 @@ exports.createUser = async (req, res) => {
                 id: user._id.toString()
             },
             config.get("jwtSecret"),
-            {expiresIn: "365d"}
+            { expiresIn: "365d" }
         );
 
         if (user.password) {
@@ -395,7 +367,7 @@ exports.createUser = async (req, res) => {
         };
 
         if (isNewUser) {
-            responseData.defaultPassword = '12345678';
+            // responseData.defaultPassword = '12345678'; // Removed for security
         }
 
         return sendOkResponse(
