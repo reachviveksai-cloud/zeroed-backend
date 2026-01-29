@@ -6,8 +6,7 @@ require('dotenv').config()
 
 const mongoose = require('mongoose');
 const config = require('config');
-// const db = process.env.NODE_ENV === 'production' ? config.get('dbConfig.production_mongoURI') : config.get('dbConfig.staging_mongoURI')
-const db = process.env.MONGODB_URI;
+const db = process.env.MONGO_URI || config.get('dbConfig.staging_mongoURI');
 
 const connectDB = async () => {
     try {
