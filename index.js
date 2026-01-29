@@ -36,7 +36,7 @@ if (!isProduction) {
 
 app.use('/', indexRouter);
 
-const PORT = isProduction ? process.env.PRODUCTION_PORT : process.env.STAGING_PORT
+const PORT = process.env.PORT || (isProduction ? process.env.PRODUCTION_PORT : process.env.STAGING_PORT);
 
 module.exports = {
   handler: serverless(app),
